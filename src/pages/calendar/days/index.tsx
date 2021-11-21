@@ -1,9 +1,9 @@
+import React, { CSSProperties, FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View } from '@tarojs/components';
-import './index.less';
-import React, {CSSProperties, FunctionComponent, useCallback, useEffect, useRef, useState} from 'react';
-import { formatDate, indexOf, LunarInfo } from '../utils';
-import { CalendarMark, ExtraInfo } from '../index';
+import { formatDate, LunarInfo } from '../utils';
+import { CalendarMark, CalendarExtraInfo, CalendarBadgeInfo } from '../index';
 import Day from '../day';
+import './index.less';
 
 export type CalendarDateInfo = {
   /** 当前月的第几天1 ~ 31 */
@@ -135,6 +135,8 @@ export type StyleGeneratorParams = {
   marked: boolean;
   /** 是否含有额外信息 */
   hasExtraInfo: boolean;
+  /** 是否含有标记信息 */
+  hasBadgeInfo: boolean;
   /** 多选模式选项 */
   multiSelect: {
     /** 是否在选择范围内 */
@@ -159,6 +161,8 @@ export type CustomStyles = {
   containerStyle?: CSSProperties;
   /** 额外信息样式 */
   extraInfoStyle?: CSSProperties;
+  /** 额外信息样式 */
+  badgeInfoStyle?: CSSProperties;
 };
 
 export type DaysProps = {
@@ -169,7 +173,9 @@ export type DaysProps = {
   /** 长按回调（触发长按事件时不会触发点击事件） */
   onDayLongPress?: (item: { value: string }) => any;
   /** 额外信息 */
-  extraInfo: ExtraInfo[];
+  extraInfo: CalendarExtraInfo[];
+  /** 标记信息 */
+  badgeInfo: CalendarBadgeInfo[];
   /** 要标记的日期 */
   marks: CalendarMark[];
   /** 选定的日期 */
@@ -215,18 +221,21 @@ const Days: FunctionComponent<DaysProps> = ({
   bodyStyle,
   view,
   startDay,
-  extraInfo
+  extraInfo,
+  badgeInfo,
 }) => {
-  const [days, setDays] = useState<Array<CalendarDateInfo>>([]);
   const prevDateRef = useRef<Date>(null);
   const prevViewRef = useRef<String>(null);
-  const _onDayClick = useCallback((value)=>{
-    onClick&&onClick(value);
-  }, [onClick]);
 
-  const _onDayLongPress = useCallback(args => {
-    onDayLongPress&&onDayLongPress(args);
-  }, [onDayLongPress]);
+  const [days, setDays] = useState<Array<CalendarDateInfo>>([]);
+
+  const maxDateObj = useMemo(() => new Date(maxDate ? maxDate : new Date()), [maxDate]);
+  const markDateList = useMemo(() => marks ? marks.map(value => value.value) : [], [marks]);
+  const extraInfoDateList = useMemo(() => extraInfo ? extraInfo.map(value => value.value) : [], [extraInfo]);
+  const badgeInfoDateList = useMemo(() => badgeInfo ? badgeInfo.map(value => value.value) : [], [badgeInfo]);
+
+  const _onDayClick = useCallback((value) => { onClick && onClick(value) }, [onClick]);
+  const _onDayLongPress = useCallback(args => { onDayLongPress && onDayLongPress(args) }, [onDayLongPress]);
 
   useEffect(()=>{
     //view和startDay基本不会变，就date会经常变化
@@ -247,34 +256,26 @@ const Days: FunctionComponent<DaysProps> = ({
     prevDateRef.current = date;
     //@ts-ignore
     prevViewRef.current = view;
-  }, [view, date, startDay ]);
+  }, [view, date, startDay]);
 
-
-  // @ts-ignore
-  const maxDateObj = new Date(maxDate ? maxDate : new Date());
-  const markDateList = marks ? marks.map(value => value.value) : [];
-  const extraInfoDateList = extraInfo
-    ? extraInfo.map(value => value.value)
-    : [];
-  let endDateStr =  selectedRange ? selectedRange.end : '';
+  let endDateStr = selectedRange ? selectedRange.end : '';
   const startDateObj = new Date(selectedRange ? selectedRange.start : '');
   const endDateObj = new Date(endDateStr);
   const minDateObj = new Date(minDate);
+
   return (
-    <View className="calendar-body" style={bodyStyle}>
+    <View className='calendar-body' style={bodyStyle}>
       {days.map(value => {
-        const markIndex = indexOf(markDateList, value.fullDateStr);
-        const extraInfoIndex = indexOf(extraInfoDateList, value.fullDateStr);
+        const markIndex = markDateList.indexOf(value.fullDateStr);
+        const extraInfoIndex = extraInfoDateList.indexOf(value.fullDateStr);
+        const badgeInfoIndex = badgeInfoDateList.indexOf(value.fullDateStr);
         let isInRange = false;
         let rangeStart = false;
         let rangeEnd = false;
         if (isMultiSelect && endDateStr) {
           // 范围选择模式
           const valueDateTimestamp = new Date(value.fullDateStr).getTime();
-          if (
-            valueDateTimestamp >= startDateObj.getTime() &&
-            valueDateTimestamp <= endDateObj.getTime()
-          ) {
+          if (valueDateTimestamp >= startDateObj.getTime() && valueDateTimestamp <= endDateObj.getTime()) {
             // 被选择（范围选择）
             isInRange = true;
             if (valueDateTimestamp === startDateObj.getTime()) {
@@ -298,6 +299,7 @@ const Days: FunctionComponent<DaysProps> = ({
             isMultiSelectAndFinish={isMultiSelect && (selectedRange.end || '') != ''}
             markIndex={markIndex}
             extraInfoIndex={extraInfoIndex}
+            badgeInfoIndex={badgeInfoIndex}
             mode={mode}
             showDivider={showDivider}
             minDate={minDate}
@@ -306,9 +308,10 @@ const Days: FunctionComponent<DaysProps> = ({
             selectedDateColor={selectedDateColor}
             markColor={markIndex === -1 ? '' : marks[markIndex].color}
             markSize={markIndex === -1 ? '' : marks[markIndex].markSize}
-            extraInfoColor={extraInfoIndex === -1 ? "" : extraInfo[extraInfoIndex].color}
-            extraInfoSize={extraInfoIndex === -1 ? "" : extraInfo[extraInfoIndex].fontSize}
-            extraInfoText={extraInfoIndex === -1 ? "" : extraInfo[extraInfoIndex].text}
+            badgeItemList={badgeInfoIndex === -1 ? '' : (badgeInfo[badgeInfoIndex].list || [])}
+            extraInfoColor={extraInfoIndex === -1 ? '' : extraInfo[extraInfoIndex].color}
+            extraInfoSize={extraInfoIndex === -1 ? '' : extraInfo[extraInfoIndex].fontSize}
+            extraInfoText={extraInfoIndex === -1 ? '' : extraInfo[extraInfoIndex].text}
             customStyleGenerator={customStyleGenerator}
             isInRange={isInRange}
             rangeStart={rangeStart}

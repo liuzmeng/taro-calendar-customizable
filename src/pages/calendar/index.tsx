@@ -7,6 +7,8 @@ import Days, { CalendarDateInfo, CustomStyles, StyleGeneratorParams } from './da
 
 import './index.less';
 
+type BadgeColor = ['grey', 'pink', 'pinkInverse', 'magenta', 'magentaInverse', 'red', 'redInverse', 'volcano', 'volcanoInverse', 'orange', 'orangeInverse', 'yellow', 'yellowInverse', 'gold', 'goldInverse', 'cyan', 'cyanInverse', 'lime', 'limeInverse', 'green', 'greenInverse', 'blue', 'blueInverse', 'geekblue', 'geekblueInverse', 'purple', 'purpleInverse', 'success', 'error', 'warning', 'info']
+
 export type CalendarMark = {
   /** 要标记的日期 YYYY-MM-DD*/
   value: string;
@@ -27,6 +29,22 @@ export type CalendarExtraInfo = {
   fontSize?: string;
 };
 
+export type CalendarBadgeItemInfo = {
+  /** 文本 */
+  text: string;
+  /** 类型 */
+  color?: BadgeColor[number];
+  /** 样式 */
+  style?: CSSProperties;
+}
+
+export type CalendarBadgeInfo = {
+  /** 要标记的日期 YYYY-MM-DD*/
+  value: string;
+  // 标记列表
+  list: CalendarBadgeItemInfo[];
+};
+
 export interface CalendarCustomStyleGenerator {
   (dateInfo: StyleGeneratorParams): CustomStyles;
 }
@@ -34,6 +52,8 @@ export interface CalendarCustomStyleGenerator {
 export type CalendarProps = {
   /** 额外信息 */
   extraInfo?: CalendarExtraInfo[];
+  /** 标记信息 */
+  badgeInfo?: CalendarBadgeInfo[];
   /** 要标记的日期列表 YYYY-MM-DD */
   marks?: CalendarMark[];
   /** 点击回调 */
@@ -140,7 +160,8 @@ export default class Calendar extends Component<CalendarProps, IState> {
     view: 'month',
     currentView: formatDate(new Date()),
     startDay: 0,
-    extraInfo: []
+    extraInfo: [],
+    badgeInfo: [],
   };
 
   state: IState = {
@@ -320,7 +341,8 @@ export default class Calendar extends Component<CalendarProps, IState> {
       hideController,
       onCurrentViewChange,
       startDay,
-      extraInfo
+      extraInfo,
+      badgeInfo,
     } = this.props;
     // 配合Swiper组件实现无限滚动
     // 原理：永远保持当前屏幕显示月份的左边是前一个月，右边是后一个月
@@ -362,7 +384,8 @@ export default class Calendar extends Component<CalendarProps, IState> {
       customStyleGenerator,
       view: view as 'month' | 'week',
       startDay: startDay as number,
-      extraInfo: extraInfo ? extraInfo : []
+      extraInfo: extraInfo ? extraInfo : [],
+      badgeInfo: badgeInfo ? badgeInfo : []
     };
 
     return (
