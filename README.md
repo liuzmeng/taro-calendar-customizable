@@ -1,4 +1,4 @@
-# taro-calendar-customizable
+# taro-react-calendar
 
 [![NPM version](https://img.shields.io/npm/v/taro-calendar-customizable.svg)](https://www.npmjs.com/package/taro-calendar-customizable)
 [![NPM downloads](https://img.shields.io/npm/dw/taro-calendar-customizable)](https://www.npmjs.com/package/taro-calendar-customizable)
