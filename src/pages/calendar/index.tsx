@@ -1,14 +1,11 @@
-import { Picker, View, Swiper, SwiperItem } from '@tarojs/components';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Taro from '@tarojs/taro';
-import React,{ Component } from 'react'
-import './index.less';
+import { Picker, View, Swiper, SwiperItem } from '@tarojs/components';
+import React, { Component, CSSProperties } from 'react';
 import { formatDate, fillWithZero } from './utils';
-import Days, {
-  CalendarDateInfo,
-  CustomStyles,
-  StyleGeneratorParams
-} from './days/index';
-import { CSSProperties } from 'react';
+import Days, { CalendarDateInfo, CustomStyles, StyleGeneratorParams } from './days/index';
+
+import './index.less';
 
 export type CalendarMark = {
   /** 要标记的日期 YYYY-MM-DD*/
@@ -73,6 +70,8 @@ export type IProps = {
   onSelectDate?: (value: { start: string; end: string }) => any;
   /** 自定义样式生成器 */
   customStyleGenerator?: (dateInfo: StyleGeneratorParams) => CustomStyles;
+  /** 容器样式 */
+  style?: CSSProperties;
   /** 头部整体样式 */
   headStyle?: CSSProperties;
   /** 头部单元格样式 */
@@ -121,15 +120,6 @@ const getWeekDayList = (startDay: number) => {
 };
 
 export default class Calendar extends Component<IProps, IState> {
-
-
-  state: IState = {
-    current: formatDate(new Date(this.props.currentView as string)),
-    selectedDate: this.props.selectedDate as string,
-    currentCarouselIndex: 1,
-    selectedRange: { start: '', end: '' }
-  };
-
   /** 指定默认的props */
   public static defaultProps: Partial<IProps> = {
     isVertical: false,
@@ -148,31 +138,33 @@ export default class Calendar extends Component<IProps, IState> {
     startDay: 0,
     extraInfo: []
   };
+
+  state: IState = {
+    current: formatDate(new Date(this.props.currentView as string)),
+    selectedDate: this.props.selectedDate as string,
+    currentCarouselIndex: 1,
+    selectedRange: { start: '', end: '' }
+  };
+
   UNSAFE_componentWillMount() {
     if (this.props.bindRef) {
       this.props.bindRef(this);
     }
   }
   UNSAFE_componentWillReceiveProps(nextProps: Readonly<IProps>): void {
-    if (
-      nextProps.selectedDate &&
-      nextProps.selectedDate !== this.props.selectedDate
-    ) {
+    if (nextProps.selectedDate && nextProps.selectedDate !== this.props.selectedDate) {
       this.setState({
         selectedDate: nextProps.selectedDate,
         current: nextProps.selectedDate
       });
     }
-    if (
-      nextProps.currentView &&
-      nextProps.currentView !== this.props.currentView
-    ) {
+    if (nextProps.currentView && nextProps.currentView !== this.props.currentView) {
       this.setState({ current: nextProps.currentView });
     }
   }
 
   getPickerText = () => {
-    let { view,startDay } = this.props;
+    let { view, startDay } = this.props;
     startDay = startDay as number
     const { current } = this.state;
     const currentDateObj = new Date(current);
@@ -180,7 +172,7 @@ export default class Calendar extends Component<IProps, IState> {
 
     if (view === 'week') {
       currentDateObj.setDate(
-        currentDateObj.getDate() - (currentDateObj.getDay()>=startDay?currentDateObj.getDay() - startDay: 6-startDay+currentDateObj.getDay()) 
+        currentDateObj.getDate() - (currentDateObj.getDay() >= startDay ? currentDateObj.getDay() - startDay : 6 - startDay + currentDateObj.getDay())
       );
       const weekStart = currentDateObj.getDate();
       const weekStartMonth = currentDateObj.getMonth() + 1;
@@ -202,6 +194,7 @@ export default class Calendar extends Component<IProps, IState> {
       return monthStr;
     }
   };
+
   onClickDate = (value: CalendarDateInfo) => {
     const { onDayClick, onSelectDate } = this.props;
     let { current, currentCarouselIndex, selectedRange } = this.state;
@@ -263,10 +256,10 @@ export default class Calendar extends Component<IProps, IState> {
       const nextWeek = formatDate(dateObj, 'day');
       current = nextWeek;
     }
-      this.setState({
-        currentCarouselIndex: (currentCarouselIndex + 1) % 3,
-        current
-      });
+    this.setState({
+      currentCarouselIndex: (currentCarouselIndex + 1) % 3,
+      current
+    });
     if (onClickNext) onClickNext();
     if (onCurrentViewChange) onCurrentViewChange(current);
   };
@@ -289,19 +282,14 @@ export default class Calendar extends Component<IProps, IState> {
     const { onClickPre, onCurrentViewChange } = this.props;
     if (onClickPre) onClickPre();
     if (onCurrentViewChange) onCurrentViewChange(current);
-      this.setState({
-        currentCarouselIndex: (currentCarouselIndex + 2) % 3,
-        current
-      });
+    this.setState({
+      currentCarouselIndex: (currentCarouselIndex + 2) % 3,
+      current
+    });
   };
 
   render() {
-    const {
-      current,
-      selectedDate,
-      currentCarouselIndex,
-      selectedRange
-    } = this.state;
+    const { current, selectedDate, currentCarouselIndex, selectedRange } = this.state;
     const {
       marks,
       isVertical,
@@ -315,6 +303,7 @@ export default class Calendar extends Component<IProps, IState> {
       showDivider,
       isMultiSelect,
       customStyleGenerator,
+      style,
       headStyle,
       headCellStyle,
       bodyStyle,
@@ -373,58 +362,47 @@ export default class Calendar extends Component<IProps, IState> {
     };
 
     return (
-      <View>
-          <View className="calendar-picker" style={{ ...pickerRowStyle ,display:hideController?'none':"block"}}>
-            {hideArrow ? (
-              ''
-            ) : (
-              <View
-                style={leftArrowStyle}
-                className="calendar-arrow-left"
-                onClick={() => this.goPre()}
-              />
-            )}
-            <Picker
-              style={{
-                display: 'inline-block',
-                lineHeight: '25px',
-                ...datePickerStyle
+      <View style={style}>
+        <View className='calendar-picker' style={{ ...pickerRowStyle, display: hideController ? 'none' : 'block' }}>
+          {hideArrow ? '' : (
+            <View
+              style={leftArrowStyle}
+              className='calendar-arrow-left'
+              onClick={() => this.goPre()}
+            />
+          )}
+          <Picker
+            style={{ display: 'inline-block', lineHeight: '25px', ...datePickerStyle }}
+            mode='date'
+            onChange={e => {
+              const changedCurrentDate = formatDate(new Date(e.detail.value));
+              this.setState({ current: changedCurrentDate });
+              if (onCurrentViewChange) {
+                onCurrentViewChange(changedCurrentDate);
+              }
+            }}
+            value={current}
+            fields='month'
+            start={minDate}
+            end={maxDate}
+          >
+            {pickerTextGenerator ? pickerTextGenerator(new Date(current)) : this.getPickerText()}
+          </Picker>
+          {hideArrow ? '' : (
+            <View
+              style={rightArrowStyle}
+              className='calendar-arrow-right'
+              onClick={() => {
+                this.setState({
+                  currentCarouselIndex: (currentCarouselIndex + 1) % 3
+                });
+                this.goNext();
               }}
-              mode="date"
-              onChange={e => {
-                const currentDate = formatDate(new Date(e.detail.value));
-                this.setState({ current: currentDate });
-                if (onCurrentViewChange) {
-                  onCurrentViewChange(currentDate);
-                }
-              }}
-              value={current}
-              fields="month"
-              start={minDate}
-              end={maxDate}
-            >
-              {pickerTextGenerator
-                ? pickerTextGenerator(new Date(current))
-                : this.getPickerText()}
-            </Picker>
-            {hideArrow ? (
-              ''
-            ) : (
-              <View
-                style={rightArrowStyle}
-                className="calendar-arrow-right"
-                onClick={() => {
-                  this.setState({
-                    currentCarouselIndex: (currentCarouselIndex + 1) % 3
-                  });
-                  this.goNext();
-                }}
-              />
-            )}
-          </View>
+            />
+          )}
+        </View>
 
-
-        <View className="calendar-head" style={headStyle}>
+        <View className='calendar-head' style={headStyle}>
           {getWeekDayList(startDay as number).map(value => (
             <View style={headCellStyle} key={value}>
               {value}
@@ -453,15 +431,15 @@ export default class Calendar extends Component<IProps, IState> {
                 this.setState({ currentCarouselIndex: e.detail.current });
               }
             }}
-            className={'calendar-swiper'}
+            className='calendar-swiper'
           >
-            <SwiperItem style = "position: absolute; width: 100%; height: 100%;">
+            <SwiperItem style='position: absolute; width: 100%; height: 100%;'>
               <Days date={monthObj[0]} {...publicDaysProp} />
             </SwiperItem >
-            <SwiperItem style = "position: absolute; width: 100%; height: 100%;">
+            <SwiperItem style='position: absolute; width: 100%; height: 100%;'>
               <Days date={monthObj[1]} {...publicDaysProp} />
             </SwiperItem>
-            <SwiperItem style = "position: absolute; width: 100%; height: 100%;">
+            <SwiperItem style='position: absolute; width: 100%; height: 100%;'>
               <Days date={monthObj[2]} {...publicDaysProp} />
             </SwiperItem>
           </Swiper>
