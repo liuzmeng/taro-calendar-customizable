@@ -308,7 +308,7 @@ const Days: FunctionComponent<DaysProps> = ({
             selectedDateColor={selectedDateColor}
             markColor={markIndex === -1 ? '' : marks[markIndex].color}
             markSize={markIndex === -1 ? '' : marks[markIndex].markSize}
-            badgeItemList={badgeInfoIndex === -1 ? '' : (badgeInfo[badgeInfoIndex].list || [])}
+            badgeItemList={badgeInfoIndex === -1 ? [] : (badgeInfo[badgeInfoIndex].list || [])}
             extraInfoColor={extraInfoIndex === -1 ? '' : extraInfo[extraInfoIndex].color}
             extraInfoSize={extraInfoIndex === -1 ? '' : extraInfo[extraInfoIndex].fontSize}
             extraInfoText={extraInfoIndex === -1 ? '' : extraInfo[extraInfoIndex].text}
