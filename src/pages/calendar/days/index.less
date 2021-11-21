@@ -63,8 +63,10 @@
 
 // 农历
 .lunar-day {
+  margin-bottom: 8rpx;
   text-align: center;
   font-size: 2.5vw;
+  line-height: 1.2;
   opacity: 0.7;
 }
 
@@ -77,8 +79,8 @@
 // 标记
 .calendar-marked > .calendar-mark {
   position: absolute;
-  right: 0;
-  top: 3vw;
+  right: 0.3rem;
+  top: 0.8rem;
   background-color: #7096e0;
   height: 0.5rem;
   width: 0.5rem;
@@ -89,18 +91,35 @@
 .calendar-extra-info {
   position: absolute;
   right: 0;
+  width: 100%;
   font-size: 2.3vw;
   top: 0rem;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
   color: #FF9800;
 }
 
 // 标记信息
 .calendar-badge-info {
+  flex: 1;
   display: flex;
   flex-direction: column;
   width: 100%;
+  overflow: hidden;
 
   .calendar-badge-item {
-    margin-bottom: 10rpx;
+    margin: 0 6rpx 8rpx;
+    padding: 0px 6rpx;
+    font-size: 3.4vw;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }

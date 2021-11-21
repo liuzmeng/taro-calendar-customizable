@@ -372,7 +372,6 @@ const Day: FC<IProps> = (args) => {
       style={customStyles.containerStyle}
     >
       <View
-
         className='calendar-date'
         style={
           customStyles.dateStyle || customStyles.dateStyle === {}
@@ -409,30 +408,20 @@ const Day: FC<IProps> = (args) => {
           })()}
         </View>
       )}
+
       {/* 标记 */}
-      <View
-        className='calendar-mark'
-        style={{
-          backgroundColor: markIndex === -1 ? '' : markColor,
-          height: markIndex === -1 ? '' : markSize,
-          width: markIndex === -1 ? '' : markSize,
-          top: mode === 'lunar' ? '2.0rem' : '1.5rem',
-          ...customStyles.markStyle
-        }}
-      />
+      {markIndex === -1 && (
+        <View className='calendar-mark' style={{ backgroundColor: markColor, height: markSize, width: markSize, ...customStyles.markStyle }} />
+      )}
+
       {/* 额外信息 */}
       {extraInfoIndex !== -1 && (
-        <View
-          className='calendar-extra-info'
-          style={{
-            color: extraInfoIndex === -1 ? '' : extraInfoColor,
-            fontSize: extraInfoIndex === -1 ? '' : extraInfoSize,
-            ...customStyles.extraInfoStyle
-          }}
-        >
+        <View className='calendar-extra-info' style={{ color: extraInfoColor, fontSize: extraInfoSize, ...customStyles.extraInfoStyle }}>
           {extraInfoText}
         </View>
       )}
+
+      {/* 标记信息 */}
       {badgeInfoIndex !== -1 && badgeItemList && badgeItemList.length && (
         <View className='calendar-badge-info' style={customStyles.badgeInfoStyle}>
           {badgeItemList.map(({ text, color, style }, index) => {
