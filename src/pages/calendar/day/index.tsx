@@ -410,7 +410,7 @@ const Day: FC<IProps> = (args) => {
       )}
 
       {/* 标记 */}
-      {markIndex === -1 && (
+      {markIndex !== -1 && (
         <View className='calendar-mark' style={{ backgroundColor: markColor, height: markSize, width: markSize, ...customStyles.markStyle }} />
       )}
 
