@@ -1,6 +1,6 @@
 {
-  "name": "taro-calendar-customizable",
-  "version": "2.1.2",
+  "name": "taro-react-calendar",
+  "version": "1.0.0",
   "private": false,
   "description": "可自定义部分样式的taro日历组件",
   "templateInfo": {
@@ -31,7 +31,7 @@
     "Android >= 4.1",
     "ios >= 8"
   ],
-  "author": "zkyTech",
+  "author": "liuzhimeng",
   "dependencies": {
     "@babel/runtime": "^7.7.7",
     "@tarojs/components": "3.0.0-rc.6",
@@ -61,15 +61,14 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zkytech/taro-calendar-customizable"
+    "url": "https://github.com/liuzmeng/taro-calendar-customizable"
   },
   "main": "index.js",
   "types": "index.d.ts",
   "keywords": [
     "calendar",
     "taro",
-    "taro-calendar-customizable",
-    "customizable"
+    "react"
   ],
   "files": [
     "README.md",
