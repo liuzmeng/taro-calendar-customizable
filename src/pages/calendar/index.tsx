@@ -16,7 +16,7 @@ export type CalendarMark = {
   markSize?: string;
 };
 
-export type ExtraInfo = {
+export type CalendarExtraInfo = {
   /** 要标记的日期 YYYY-MM-DD*/
   value: string;
   /** 额外信息文本 */
@@ -27,9 +27,13 @@ export type ExtraInfo = {
   fontSize?: string;
 };
 
-export type IProps = {
+export interface CalendarCustomStyleGenerator {
+  (dateInfo: StyleGeneratorParams): CustomStyles;
+}
+
+export type CalendarProps = {
   /** 额外信息 */
-  extraInfo?: ExtraInfo[];
+  extraInfo?: CalendarExtraInfo[];
   /** 要标记的日期列表 YYYY-MM-DD */
   marks?: CalendarMark[];
   /** 点击回调 */
@@ -69,7 +73,7 @@ export type IProps = {
   /** 范围选择完成时的回调 */
   onSelectDate?: (value: { start: string; end: string }) => any;
   /** 自定义样式生成器 */
-  customStyleGenerator?: (dateInfo: StyleGeneratorParams) => CustomStyles;
+  customStyleGenerator?: CalendarCustomStyleGenerator;
   /** 容器样式 */
   style?: CSSProperties;
   /** 头部整体样式 */
@@ -119,9 +123,9 @@ const getWeekDayList = (startDay: number) => {
   return result;
 };
 
-export default class Calendar extends Component<IProps, IState> {
+export default class Calendar extends Component<CalendarProps, IState> {
   /** 指定默认的props */
-  public static defaultProps: Partial<IProps> = {
+  public static defaultProps: Partial<CalendarProps> = {
     isVertical: false,
     marks: [],
     selectedDate: formatDate(new Date(), 'day'),
@@ -151,7 +155,7 @@ export default class Calendar extends Component<IProps, IState> {
       this.props.bindRef(this);
     }
   }
-  UNSAFE_componentWillReceiveProps(nextProps: Readonly<IProps>): void {
+  UNSAFE_componentWillReceiveProps(nextProps: Readonly<CalendarProps>): void {
     if (nextProps.selectedDate && nextProps.selectedDate !== this.props.selectedDate) {
       this.setState({
         selectedDate: nextProps.selectedDate,

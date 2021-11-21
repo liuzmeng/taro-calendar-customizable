@@ -1,15 +1,16 @@
 import { ComponentClass } from 'react';
-import { IProps } from './src/pages/calendar/index';
+import {
+  CalendarProps as Props,
+  CalendarCustomStyleGenerator as CustomStyleGenerator,
+  CalendarExtraInfo as ExtraInfo,
+  CalendarMark as Mark,
+} from './src/pages/calendar/index';
 import { LunarInfo } from './src/pages/calendar/utils';
 
-export declare type CalendarMark = {
-  /** 要标记的日期 */
-  value: string;
-  /** 标记颜色 */
-  color?: string;
-  /** 标记的大小，css中的width、length */
-  markSize?: string;
-};
+export declare type CalendarProps = Props;
+export declare type CalendarCustomStyleGenerator = CustomStyleGenerator;
+export declare type CalendarExtraInfo = ExtraInfo;
+export declare type CalendarMark = Mark;
 
 export declare namespace CalendarTools {
   /** 公历转农历
@@ -30,6 +31,6 @@ export declare namespace CalendarTools {
   ): LunarInfo;
 }
 
-declare const Calendar: ComponentClass<IProps>;
+declare const Calendar: ComponentClass<CalendarProps>;
 
 export default Calendar;
